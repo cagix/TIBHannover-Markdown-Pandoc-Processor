@@ -3,5 +3,5 @@ output:
   - format: epub
   - format: html
   - format: pdf
-generate_landingpage: false
+generate_landingpage: true
 generate_reuse_note: true
