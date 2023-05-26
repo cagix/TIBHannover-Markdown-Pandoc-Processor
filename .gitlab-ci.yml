@@ -1,0 +1,6 @@
+stages:
+  - build
+  
+# see https://docs.gitlab.com/ee/topics/autodevops/#using-components-of-auto-devops
+include:
+  - template: Jobs/Build.gitlab-ci.yml # https://gitlab.com/gitlab-org/gitlab-ce/blob/master/lib/gitlab/ci/templates/Jobs/Build.gitlab-ci.yml

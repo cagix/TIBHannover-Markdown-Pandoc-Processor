@@ -1,0 +1,22 @@
+#!/bin/sh
+
+if [[ -z "${OUTPUT_FILENAME}" ]]; then
+  OUTPUT_FILENAME="document"
+fi
+if [[ -z "${USER_AGENT}" ]]; then
+  USER_AGENT="{{ page_title }} ({{ url | default('https://gitlab.com/TIBHannover/oer/markdown-pandoc-processor', true) }})"
+fi
+
+{% if generate_landingpage %}
+echo '$toc$' > .template-toc
+pandoc title.txt {{ markdown_filename }} -f markdown -t html -o .toc.html --template .template-toc --toc
+sed -i "s/href=\"#/href=\"${OUTPUT_FILENAME}.html#/g" .toc.html
+echo -e "table-of-contents: |\n  `cat .toc.html | tr '\n' ' '`" > .toc.yml
+pandoc title.txt {{ markdown_filename }} -f markdown -t html -s -o index.html --metadata-file .toc.yml --metadata-file metadata.yml --metadata pagetitle="{{ page_title }}" --include-in-header=metadata.json --katex --css pandoc.css --template .template-landingpage.html --toc -V toc-title={{ toc_title }} -V document-filename=${OUTPUT_FILENAME}
+{% endif %}
+{% if has_online_version %}
+pandoc title.txt {{ markdown_filename }} -f markdown -t html -s -o {% if generate_landingpage %}${OUTPUT_FILENAME}.html{% else %}index.html{% endif %} --metadata pagetitle="{{ page_title }}" --include-in-header=metadata.json --katex --css pandoc.css
+{% endif %}
+{% for download in downloads %}
+pandoc title.txt {{ markdown_filename }} -f markdown -t {{ download.pandoc_format }} --request-header User-Agent:"${USER_AGENT}" -s -o ${OUTPUT_FILENAME}.{{ download.file_extension }} --metadata pagetitle="{{ page_title }}" --webtex -V linkcolor:blue
+{% endfor %}
