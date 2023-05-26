@@ -25,7 +25,7 @@ text_templates = {
 ## Hinweis zur Nachnutzung
 
 Dieses Werk und dessen Inhalte sind - sofern nicht anders angegeben - lizenziert unter {{ course_license_short_name }}.
-Nennung gemäß [TULLU-Regel](https://open-educational-resources.de/oer-tullu-regel/) bitte wie folgt: "[{{ course_title }}]({{ course_url }})" von {{ course_author }}, Lizenz: [{{ course_license_short_name }}]({{ course_license_url }}).
+Nennung dieses Werkes bitte wie folgt: "[{{ course_title }}]({{ course_url }})" von {{ course_author }}, Lizenz: [{{ course_license_short_name }}]({{ course_license_url }}).
 Die Quellen dieses Werks sind verfügbar auf [{{ domain }}]({{ course_url }}).
 """,
         "en": """
@@ -34,7 +34,7 @@ Die Quellen dieses Werks sind verfügbar auf [{{ domain }}]({{ course_url }}).
 ## Note on reuse
 
 This work and its contents are licensed under {{ course_license_short_name }} unless otherwise noted.
-Attribution according to [TASLL rule](https://open-educational-resources.de/wp-content/uploads/graphic_TASLL-rule_OER-2.pdf) please as follows: "[{{ course_title }}]({{ course_url }})" by {{ course_author }}, license: [{{ course_license_short_name }}]({{ course_license_url }}).
+Please cite this work as follows: "[{{ course_title }}]({{ course_url }})" by {{ course_author }}, license: [{{ course_license_short_name }}]({{ course_license_url }}).
 The sources of this work are available on [{{ domain }}]({{ course_url }}).
 """
     }
