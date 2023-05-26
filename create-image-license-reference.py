@@ -11,10 +11,7 @@ from helper import init_list, get_config, get_creator_string, get_license_url
 
 filename = sys.argv[1]
 config = get_config()
-reuse_note = config["reuse_note"] if "reuse_note" in config else {}
-create_license = reuse_note["generate_license_note"] if "generate_license_note" in reuse_note else True
-create_attribution = reuse_note["generate_tullu_tasll_note"] if "generate_tullu_tasll_note" in reuse_note else True
-create_sources_link = reuse_note["generate_sources_note"] if "generate_sources_note" in reuse_note else True
+generate_reuse_note = config["generate_reuse_note"] if "generate_reuse_note" in config else True
 
 text_templates = {
     "mtullu": {
@@ -27,18 +24,18 @@ text_templates = {
 ---
 ## Hinweis zur Nachnutzung
 
-{%if create_license %}Dieses Werk und dessen Inhalte sind - sofern nicht anders angegeben - lizenziert unter {{ course_license_short_name }}.{% endif %}
-{%if create_attribution %}Nennung gemäß [TULLU-Regel](https://open-educational-resources.de/oer-tullu-regel/) bitte wie folgt: "[{{ course_title }}]({{ course_url }})" von {{ course_author }}, Lizenz: [{{ course_license_short_name }}]({{ course_license_url }}).{% endif %}
-{%if create_sources_link %}Die Quellen dieses Werks sind verfügbar auf [{{ domain }}]({{ course_url }}).{% endif %}
+Dieses Werk und dessen Inhalte sind - sofern nicht anders angegeben - lizenziert unter {{ course_license_short_name }}.
+Nennung gemäß [TULLU-Regel](https://open-educational-resources.de/oer-tullu-regel/) bitte wie folgt: "[{{ course_title }}]({{ course_url }})" von {{ course_author }}, Lizenz: [{{ course_license_short_name }}]({{ course_license_url }}).
+Die Quellen dieses Werks sind verfügbar auf [{{ domain }}]({{ course_url }}).
 """,
         "en": """
 
 ---
 ## Note on reuse
 
-{%if create_license %}This work and its contents are licensed under {{ course_license_short_name }} unless otherwise noted.{% endif %}
-{%if create_attribution %}Attribution according to [TASLL rule](https://open-educational-resources.de/wp-content/uploads/graphic_TASLL-rule_OER-2.pdf) please as follows: "[{{ course_title }}]({{ course_url }})" by {{ course_author }}, license: [{{ course_license_short_name }}]({{ course_license_url }}).{% endif %}
-{%if create_sources_link %}The sources of this work are available on [{{ domain }}]({{ course_url }}).{% endif %}
+This work and its contents are licensed under {{ course_license_short_name }} unless otherwise noted.
+Attribution according to [TASLL rule](https://open-educational-resources.de/wp-content/uploads/graphic_TASLL-rule_OER-2.pdf) please as follows: "[{{ course_title }}]({{ course_url }})" by {{ course_author }}, license: [{{ course_license_short_name }}]({{ course_license_url }}).
+The sources of this work are available on [{{ domain }}]({{ course_url }}).
 """
     }
 }
@@ -111,7 +108,7 @@ for treffer in images:
             text = re.sub("!\[" + description + "\]\(" + link + "\)", "![" + description + "](" + link + ")" + "  \n" + mtullu, text)
 
 course_license_text = ""
-if create_license or create_attribution or create_sources_link:
+if generate_reuse_note:
     course_title = data["name"]
     if "url" in data :
         course_url = data["url"]
@@ -132,7 +129,6 @@ if create_license or create_attribution or create_sources_link:
         course_license_short_name = "CC " + course_license_code.upper() + " " + course_license_version
 
     course_license_text = Template(text_templates["reusage_note"][output_lng]).render(
-        create_license=create_license, create_attribution=create_attribution, create_sources_link=create_sources_link,
         course_author=course_author,
         course_license_short_name=course_license_short_name, course_license_url=course_license_url,
         course_title=course_title, course_url=course_url,

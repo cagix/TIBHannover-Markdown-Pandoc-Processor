@@ -4,7 +4,4 @@ output:
   - format: html
   - format: pdf
 generate_landingpage: false
-reuse_note:
-  generate_license_note: true
-  generate_sources_note: true
-  generate_tullu_tasll_note: true
+generate_reuse_note: true

@@ -1,5 +1,7 @@
 # Markdown Pandoc Processor
 
+based on https://gitlab.com/TIBHannover/oer/course-pandoc-preparation
+
 Docker container for preparation of pandoc conversion of git courses for OER repositories and Google Search.
 
 * course format: markdown
@@ -24,15 +26,9 @@ Example project: https://gitlab.com/TIBHannover/oer/course-metadata-test
     * **output** - define which output-files to generate
         * **format** - format of the output like epub, html, pdf, ...
     * **generate_landingpage** - generate a html-landing-page (true/false)
-    * **reuse_note**
-        * **generate_license_note** - generate the license-note at the document-end in the "reuse note"-section (true/false)
-        * **generate_sources_note** - generate the link to the gitlab source at the document-end in the "reuse note"-section (true/false)
-        * **generate_tullu_tasll_note** - generate the TULLU / TASSL note at the document-end in the "reuse note"-section (true/false)
+    * **generate_reuse_note** - generate the reuse note at the end of the document
 * When you call `pandoc-preparation.sh` you can use the following options
     * **[your-markdown-course]** - required, name of your markdown course (without .md extension)
-    * **--no-license** - (DEPRECATED - use **reuse_note.generate_license_note** in _config.yml_ instead) optional, deactivate generation of link-hint at the document-end (Hinweis zur Nachnutzung)
-    * **--no-sources** - (DEPRECATED - use **reuse_note.generate_sources_note** in _config.yml_ instead) optional, deactivate generation of link to the gitlab source at the document-end (Hinweis zur Nachnutzung)
-    * **--no-tullu** - (DEPRECATED - use **reuse_note.generate_tullu_tasll_note** in _config.yml_ instead) optional, deactivate generation of TULLU hint at the document-end (Hinweis zur Nachnutzung)
 
 ## Usage (CLI)
 

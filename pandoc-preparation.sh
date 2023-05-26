@@ -41,29 +41,6 @@ if [ ! "$(yq '. | has("datePublished")' metadata.yml)" = true ]; then
   yq -i -Y ".datePublished = \"$DATE_PUBLISHED\"" metadata.yml
 fi
 
-# START - Process deprecated options -> remove this block when deprecated options are removed
-for OPTION in $OPTIONS; do
-  case $OPTION in
-    --no-license)
-      echo "WARNING: deprecated option '$OPTION' will be removed in the future"
-      yq -i -Y ".reuse_note.generate_license_note = false" config.yml
-      ;;
-    --no-sources)
-      echo "WARNING: deprecated option '$OPTION' will be removed in the future"
-      yq -i -Y ".reuse_note.generate_sources_note = false" config.yml
-      ;;
-    --no-tullu)
-      echo "WARNING: deprecated option '$OPTION' will be removed in the future"
-      yq -i -Y ".reuse_note.generate_tullu_tasll_note = false" config.yml
-      ;;
-    *)
-      echo "Unknown option $OPTION -> exit"
-      exit 1
-      ;;
-  esac
-done
-# END - Process deprecated options
-
 python3 $WORKDIR/create-image-license-reference.py $MD_FILE
 python3 $WORKDIR/create-lrmi-json-tag.py
 
