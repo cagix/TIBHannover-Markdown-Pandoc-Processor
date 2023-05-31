@@ -5,9 +5,9 @@ WORKDIR=/build
 
 shift
 OPTIONS="$@"
-if [ -n "$COURSE_DIR" ]; then
-  echo "using course directory $COURSE_DIR"
-  cd "$COURSE_DIR" || exit 1
+if [ -n "$MD_INPUT_DIR" ]; then
+  echo "using input directory $MD_INPUT_DIR"
+  cd "$MD_INPUT_DIR" || exit 1
 fi
 pwd
 ls -l
@@ -51,4 +51,3 @@ rm pd-preparation-tempfile1.md
 rm $MD_FILE-tagged.md
 
 python3 $WORKDIR/create-pandoc-script.py $MD_FILE-prepared.md
-chmod +x .pandoc-generate.sh

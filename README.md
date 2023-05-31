@@ -2,18 +2,19 @@
 
 based on https://gitlab.com/TIBHannover/oer/course-pandoc-preparation
 
-Docker container for preparation of pandoc conversion of git courses for OER repositories and Google Search.
+Docker container for Pandoc conversion of Markdown files to various output formats including preparation for OER repositories and Google Search.
 
-* course format: markdown
+* input format: markdown
 * creates lrmi tags in _metadata.json_ for html output (https://www.dublincore.org/specifications/lrmi/lrmi_1/)
 * creates _title.txt_ with metadata
 * converts gitlab math formulas to latex math formulas
 * uses default _pandoc.css_, if no _pandoc.css_ exists
-* prepared course will be available in _course-prepared.md_
+* prepared course will be available in _document-prepared.md_
 * images from wikimedia commons will get automatically a license notice
 * license notice for overall content is added to the end of the document, depending on the license in _metadata.yml_
+* builds various output files via pandoc like PDF, HTML, ...
 
-Example project: https://gitlab.com/TIBHannover/oer/course-metadata-test
+Example project: TODO
 
 ## Input
  * course in markdown-format
@@ -27,15 +28,15 @@ Example project: https://gitlab.com/TIBHannover/oer/course-metadata-test
         * **format** - format of the output like epub, html, pdf, ...
     * **generate_landingpage** - generate a html-landing-page (true/false)
     * **generate_reuse_note** - generate the reuse note at the end of the document
-* When you call `pandoc-preparation.sh` you can use the following options
+* When you call `process.sh` you can use the following options
     * **[your-markdown-course]** - required, name of your markdown course (without .md extension)
 
 ## Usage (CLI)
 
-Use your current directory as a docker volume, that includes your markdown course and your _metadata.yml_ and set this volume in the environment variable _COURSE_DIR_.
+Use your current directory as a docker volume, that includes your markdown course and your _metadata.yml_ and set this volume in the environment variable _MD_INPUT_DIR_.
 
 ```
-docker run -it --volume "`pwd`:/data" -e COURSE_DIR=/data registry.gitlab.com/tibhannover/oer/markdown-pandoc-processor <your-markdown-course>
+docker run -it --volume "`pwd`:/data" -e MD_INPUT_DIR=/data registry.gitlab.com/tibhannover/oer/markdown-pandoc-processor <your-markdown-course>
 ```
 
 ## Usage (GitHub Actions)
@@ -56,31 +57,15 @@ env:
   USER_AGENT: "$GITHUB_REPOSITORY ($GITHUB_SERVER_URL/$GITHUB_REPOSITORY)"
 
 jobs:
-  prepare-pandoc:
+  prepare-and-build-documents:
     runs-on: ubuntu-latest
     container:
       image: registry.gitlab.com/tibhannover/oer/markdown-pandoc-processor
     steps:
       - uses: actions/checkout@v3
-      - run: /build/pandoc-preparation.sh $MARKDOWN_SOURCE_FILENAME
-      - uses: actions/upload-artifact@v3
-        with:
-          name: prepared-data
-          path: ${{ github.workspace }}
-          retention-days: 1
-
-  build-documents:
-    runs-on: ubuntu-latest
-    container:
-      image: pandoc/latex:3.1.1
-    needs: prepare-pandoc
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: prepared-data
       - run: |
+          /build/process.sh $MARKDOWN_SOURCE_FILENAME
           ls -l
-          ./.pandoc-generate.sh
           mkdir .public
           cp -r * .public
           mv .public public
@@ -119,26 +104,13 @@ variables:
   OUTPUT_FILENAME: "document"
   USER_AGENT: "$CI_PROJECT_TITLE ($CI_PROJECT_URL)"
 
-preparepandoc:
+prepare-and-build-documents:
   image:
     name: registry.gitlab.com/tibhannover/oer/markdown-pandoc-processor
     entrypoint: [""]
   stage: build
   script:
-    - /build/pandoc-preparation.sh <your-markdown-course-file>
-  artifacts:
-    untracked: true
-    expire_in: 5min
-
-pages:
-  image:
-    name: pandoc/latex:3.1.1
-    entrypoint: [""]
-  stage: deploy
-  dependencies:
-    - preparepandoc
-  script:
-    - ./.pandoc-generate.sh
+    - /build/process.sh $MARKDOWN_SOURCE_FILENAME
     - mkdir .public
     - cp -r * .public
     - mv .public public
