@@ -24,26 +24,26 @@ text_templates = {
 ---
 ## Hinweis zur Nachnutzung
 
-Dieses Werk und dessen Inhalte sind - sofern nicht anders angegeben - lizenziert unter {{ course_license_short_name }}.
-Nennung dieses Werkes bitte wie folgt: "[{{ course_title }}]({{ course_url }})" von {{ course_author }}, Lizenz: [{{ course_license_short_name }}]({{ course_license_url }}).
-Die Quellen dieses Werks sind verfügbar auf [{{ domain }}]({{ course_url }}).
+Dieses Werk und dessen Inhalte sind - sofern nicht anders angegeben - lizenziert unter {{ document_license_short_name }}.
+Nennung dieses Werkes bitte wie folgt: "[{{ document_title }}]({{ document_url }})" von {{ document_author }}, Lizenz: [{{ document_license_short_name }}]({{ document_license_url }}).
+Die Quellen dieses Werks sind verfügbar auf [{{ domain }}]({{ document_url }}).
 """,
         "en": """
 
 ---
 ## Note on reuse
 
-This work and its contents are licensed under {{ course_license_short_name }} unless otherwise noted.
-Please cite this work as follows: "[{{ course_title }}]({{ course_url }})" by {{ course_author }}, license: [{{ course_license_short_name }}]({{ course_license_url }}).
-The sources of this work are available on [{{ domain }}]({{ course_url }}).
+This work and its contents are licensed under {{ document_license_short_name }} unless otherwise noted.
+Please cite this work as follows: "[{{ document_title }}]({{ document_url }})" by {{ document_author }}, license: [{{ document_license_short_name }}]({{ document_license_url }}).
+The sources of this work are available on [{{ domain }}]({{ document_url }}).
 """
     }
 }
 
 data = {}
-with open("metadata.yml", 'r') as course_metadata:
+with open("metadata.yml", 'r') as document_metadata:
     try:
-        data = yaml.safe_load(course_metadata)
+        data = yaml.safe_load(document_metadata)
     except yaml.YAMLError as exc:
         print(exc)
         print("Cannot read metadata.yml")
@@ -57,9 +57,10 @@ elif "de" in lngs:
 else:
     output_lng = "en"
 
+text = ""
+with open(filename, "rt") as document_file:
+    text = document_file.read()
 # find wikimedia images
-course = open(filename + ".md", "rt")
-text = course.read()
 images = re.findall("!\[([^\]]*)\]\(([^\)]*)\)", text)
 for treffer in images:
     description = treffer[0]
@@ -107,35 +108,33 @@ for treffer in images:
             # replace original image with image + citation
             text = re.sub("!\[" + description + "\]\(" + link + "\)", "![" + description + "](" + link + ")" + "  \n" + mtullu, text)
 
-course_license_text = ""
+document_license_text = ""
 if generate_reuse_note:
-    course_title = data["name"]
+    document_title = data["name"]
     if "url" in data :
-        course_url = data["url"]
-        domain = urlparse(course_url).netloc
+        document_url = data["url"]
+        domain = urlparse(document_url).netloc
     else :
-        course_url = ""
+        document_url = ""
         domain = ""
-    course_author = ", ".join(map(lambda a: get_creator_string(a), init_list(data, 'creator')))
-    # course_author_url =
+    document_author = ", ".join(map(lambda a: get_creator_string(a), init_list(data, 'creator')))
+    # document_author_url =
 
-    course_license_url = get_license_url(data)
-    if "public-domain" in course_license_url or "zero" in course_license_url :
-        course_license_short_name = "Public domain"
+    document_license_url = get_license_url(data)
+    if "public-domain" in document_license_url or "zero" in document_license_url :
+        document_license_short_name = "Public domain"
     else :
-        course_license_components = re.findall("licenses\/([^\/]*)\/([^\/]*)", course_license_url)
-        course_license_code = course_license_components[0][0]
-        course_license_version = course_license_components[0][1]
-        course_license_short_name = "CC " + course_license_code.upper() + " " + course_license_version
+        document_license_components = re.findall("licenses\/([^\/]*)\/([^\/]*)", document_license_url)
+        document_license_code = document_license_components[0][0]
+        document_license_version = document_license_components[0][1]
+        document_license_short_name = "CC " + document_license_code.upper() + " " + document_license_version
 
-    course_license_text = Template(text_templates["reusage_note"][output_lng]).render(
-        course_author=course_author,
-        course_license_short_name=course_license_short_name, course_license_url=course_license_url,
-        course_title=course_title, course_url=course_url,
+    document_license_text = Template(text_templates["reusage_note"][output_lng]).render(
+        document_author=document_author,
+        document_license_short_name=document_license_short_name, document_license_url=document_license_url,
+        document_title=document_title, document_url=document_url,
         domain=domain
     )
 
-with open(filename + "-tagged.md", 'w', encoding='utf8') as course_tagged:
-    course_tagged.write(text + course_license_text)
-
-course.close()
+with open(".pd-preparation-tagged.md", 'w', encoding='utf8') as document_tagged:
+    document_tagged.write(text + document_license_text)

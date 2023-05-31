@@ -1,10 +1,7 @@
 #!/bin/sh
 
-MD_FILE=$1
 WORKDIR=/build
 
-shift
-OPTIONS="$@"
 if [ -n "$MD_INPUT_DIR" ]; then
   echo "using input directory $MD_INPUT_DIR"
   cd "$MD_INPUT_DIR" || exit 1
@@ -12,10 +9,7 @@ fi
 pwd
 ls -l
 
-if [ ! -f "$MD_FILE".md ]; then
-	echo "markdown file '$MD_FILE'.md not found."
-	exit 1
-elif [ ! -f "metadata.yml" ]; then
+if [ ! -f "metadata.yml" ]; then
 	echo "'metadata.yml' not found."
 	exit 1
 fi
@@ -40,14 +34,21 @@ if [ ! "$(yq '. | has("datePublished")' metadata.yml)" = true ]; then
   DATE_PUBLISHED=$(date -u +"%Y-%m-%d %H:%M")
   yq -i -Y ".datePublished = \"$DATE_PUBLISHED\"" metadata.yml
 fi
+if [ "$(yq '. | has("content_files")' config.yml)" = true ]; then
+  CONTENT_FILES=$(yq -r '."content_files"[]' config.yml | tr '\n' ' ')
+else
+  CONTENT_FILES=$(ls -1 *.md | grep -v -e README.md | tr '\n' ' ')
+fi
+echo "Using input files $CONTENT_FILES"
+pandoc -f markdown -t markdown -s -o .pd-preparation-merged.md --file-scope $CONTENT_FILES
 
-python3 $WORKDIR/create-image-license-reference.py $MD_FILE
+python3 $WORKDIR/create-image-license-reference.py .pd-preparation-merged.md
 python3 $WORKDIR/create-lrmi-json-tag.py
 
-sed -e ':a' -e 'N' -e '$!ba' -e "s/\`\`\`math\n\([^$]*\)\n\`\`\`/\$\$\1\$\$/g" $MD_FILE-tagged.md > pd-preparation-tempfile1.md
-sed -e ':a' -e 'N' -e '$!ba' -e "s/\\$\`\([^\`]*\)\`\\$/\$\1\$/g" pd-preparation-tempfile1.md > $MD_FILE-prepared.md
+sed -e ':a' -e 'N' -e '$!ba' -e "s/\`\`\`math\n\([^$]*\)\n\`\`\`/\$\$\1\$\$/g" .pd-preparation-tagged.md > pd-preparation-tempfile1.md
+sed -e ':a' -e 'N' -e '$!ba' -e "s/\\$\`\([^\`]*\)\`\\$/\$\1\$/g" pd-preparation-tempfile1.md > .pd-preparation-prepared.md
 
 rm pd-preparation-tempfile1.md
-rm $MD_FILE-tagged.md
+rm .pd-preparation-tagged.md
 
-python3 $WORKDIR/create-pandoc-script.py $MD_FILE-prepared.md
+python3 $WORKDIR/create-pandoc-script.py .pd-preparation-prepared.md
