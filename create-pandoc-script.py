@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import stat
 import sys
 import yaml
 from jinja2 import Environment, FileSystemLoader, select_autoescape, Template
@@ -51,3 +52,4 @@ template.stream({
     "url": url,
     **config
 }).dump(".pandoc-generate.sh")
+os.chmod(".pandoc-generate.sh", stat.S_IEXEC)

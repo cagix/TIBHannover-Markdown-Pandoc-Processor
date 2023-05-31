@@ -1,12 +1,14 @@
-FROM python:3-slim-bullseye
+FROM pandoc/latex:3.1.1
 
-RUN pip install PyYAML
-RUN pip install requests
-RUN pip install yq
-RUN apt update && apt install -y jq
-RUN pip install Jinja2
+RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
+RUN python3 -m ensurepip
+RUN pip3 install PyYAML
+RUN pip3 install requests
+RUN pip3 install yq
+RUN apk add --update jq
+RUN pip3 install Jinja2
 
-ENV COURSE_DIR=
+ENV MD_INPUT_DIR=
 WORKDIR /build
 
 COPY helper.py .
@@ -18,5 +20,6 @@ COPY default-config.yml .
 COPY template-landingpage.html .
 COPY create-pandoc-script.py .
 COPY pandoc-generate.sh.j2 .
+COPY process.sh .
 
-ENTRYPOINT ["/build/pandoc-preparation.sh"]
+ENTRYPOINT ["/build/process.sh"]
