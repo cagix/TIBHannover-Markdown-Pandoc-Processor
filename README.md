@@ -2,15 +2,15 @@
 
 Docker container for Pandoc conversion of Markdown files to various output formats including preparation for OER repositories and Google Search.
 
-* input format: markdown
-* creates lrmi tags in _metadata.json_ for html output (https://www.dublincore.org/specifications/lrmi/lrmi_1/)
-* creates _title.txt_ with metadata
+## Features
+
+* builds various output files via pandoc like PDF, HTML, EPUB, ...
+* use multiple markdown files as input
+* creates metadata in HTML headers for OER repositories and Google search (based on schema.org)
 * converts gitlab math formulas to latex math formulas
-* uses default _pandoc.css_, if no _pandoc.css_ exists
-* generated and prepared documents will be available as _\<OUTPUT_FILENAME\>.\<extension\>_
 * images from wikimedia commons will get automatically a license notice
 * license notice for overall content is added to the end of the document, depending on the license in _metadata.yml_
-* builds various output files via pandoc like PDF, HTML, ...
+* generate a landing page about the resource
 
 Example project: TODO
 
@@ -26,11 +26,11 @@ Example project: TODO
         * **format** - format of the output like epub, html, pdf, asciidoc
     * **generate_landingpage** - generate a html-landing-page (true/false)
     * **generate_reuse_note** - generate the reuse note at the end of the document
-    * **content_files** - (optional, default: use alphabetical order of all available markdown-files without README.md) ordered list of markdown-files to use as input.
-    
-    If the default alphabetical sort order is used, the configuration does not have to be adjusted for each new md file - however, the alphabetical sorting must be taken into account when naming the files, e.g. by using leading numbers in the file names (e.g. 01_introduction.md, 02_course.md, 03_appendix.md). If the sort order is defined via _content_files_, each new Markdown file must be added in the configuration - the naming of the files does not matter in this case.
+    * **content_files** - (optional, default: use alphabetical order of all available markdown-files without README.md) ordered list of markdown-files to use as input. If the default alphabetical sort order is used, the configuration does not have to be adjusted for each new md file - however, the alphabetical sorting must be taken into account when naming the files, e.g. by using leading numbers in the file names (e.g. 01_introduction.md, 02_course.md, 03_appendix.md). If the sort order is defined via _content_files_, each new Markdown file must be added in the configuration - the naming of the files does not matter in this case.
+* Styles
+    * You can define your own css in file _pandoc.css_ in your markdown-input-directory. Default css from _default-pandoc.css_ is used if no such file exists.
 * Environment variables
-    * **OUTPUT_FILENAME** - (default: `document`) the base filename of generated documents (without extension)
+    * **OUTPUT_FILENAME** - (default: `document`) the base filename of generated documents (without extension). Generated and prepared documents will be available as _\<OUTPUT_FILENAME\>.\<extension\>_
     * **USER_AGENT** - set the user agent that is used by pandoc during creation of output files
 
 ## Usage (CLI)
