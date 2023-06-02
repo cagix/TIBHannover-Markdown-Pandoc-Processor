@@ -18,6 +18,8 @@ COPY pandoc-preparation.sh .
 COPY default-pandoc.css .
 COPY default-config.yml .
 COPY template-landingpage.html .
+COPY template-landingpage-de.yml .
+COPY template-landingpage-en.yml .
 COPY create-pandoc-script.py .
 COPY pandoc-generate.sh.j2 .
 COPY process.sh .

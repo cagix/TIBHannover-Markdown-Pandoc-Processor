@@ -25,6 +25,8 @@ fi
 if [ ! -f "template-landingpage.html" ]; then
   cp $WORKDIR/template-landingpage.html .template-landingpage.html
 fi
+cp $WORKDIR/template-landingpage-de.yml .template-landingpage-de.yml
+cp $WORKDIR/template-landingpage-en.yml .template-landingpage-en.yml
 
 if [ ! "$(yq '. | has("url")' metadata.yml)" = true ]; then
   test -n "$CI_PROJECT_URL" && yq -i -Y ".url = \"$CI_PROJECT_URL\"" metadata.yml
