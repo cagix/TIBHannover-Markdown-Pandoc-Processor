@@ -41,22 +41,30 @@ $endif$
 <body>
   <div class="container">
     <section class="header">
-      $if(thumbnailUrl)$
-            <img src="$thumbnailUrl$" style="max-width: 315px;" class="cover-image rounded float-end d-none d-md-block" alt="thumbnail">
-            <!-- <img src="$thumbnailUrl$" class="rounded img-fluid" alt="thumbnail"> -->
-      $endif$
-      <h1 class="resource_title">$name$</h1>
-      <p class="resource_author">
-        $for(author)$$author$$sep$, $endfor$
-      </p>
-      <p class="resource_description">
-        $description$
-      </p>
-      $if(rights)$
-            <p>
-              <a href="$rights$">$rights$</a>
-            </p>
-      $endif$
+      <div class="row">
+        <div class="col-md-8">
+          <h1 class="resource_title">$name$</h1>
+          <p class="resource_author">
+            $for(author)$$author$$sep$, $endfor$
+          </p>
+          <p class="resource_description">
+            $description$
+          </p>
+$if(rights)$
+          <p>
+            <a href="$rights$">$rights$</a>
+          </p>
+$endif$
+        </div>
+        <div class="col-md-4">
+          <h1 class="d-none d-md-block"> </h1>
+$if(thumbnailUrl)$
+          <div class="text-center">
+            <img src="$thumbnailUrl$" class="img-fluid rounded mb-2" alt="thumbnail">
+          </div>
+$endif$
+        </div>
+      </div>
 $if(document-filename)$
       <div class="buttons d-flex">
 $if(has_online_version)$
