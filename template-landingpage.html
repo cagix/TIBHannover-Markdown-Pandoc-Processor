@@ -37,6 +37,15 @@ $endif$
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
+  <meta property="og:title" content="$name$" />
+  <meta property="og:type" content="website" />
+$if(description)$
+  <meta property="og:description" content="$description$" />
+$endif$
+$if(thumbnailUrl)$
+  <meta property="og:image" content="$thumbnailUrl$" />
+$endif$
+  <meta name="twitter:card" content="summary" />
 </head>
 <body>
   <div class="container">
