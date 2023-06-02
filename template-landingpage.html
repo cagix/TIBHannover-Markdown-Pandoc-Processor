@@ -88,6 +88,27 @@ $table-of-contents$
       </nav>
 $endif$
     </section>
+    <section class="metadata">
+      <h1>$metadata-title$</h1>
+$if(about)$
+      <p class="resource_about">
+        <div class="text-secondary">$label-about$</div>
+        $for(about)$$about$$sep$, $endfor$
+      </p>
+$endif$
+$if(educationalLevel)$
+      <p class="resource_educationalLevel">
+        <div class="text-secondary">$label-educationalLevel$</div>
+        $for(educationalLevel)$$educationalLevel$$sep$, $endfor$
+      </p>
+$endif$
+$if(learningResourceType)$
+      <p class="resource_learningResourceType">
+        <div class="text-secondary">$label-learningResourceType$</div>
+        $for(learningResourceType)$$learningResourceType$$sep$, $endfor$
+      </p>
+$endif$
+    </section>
   </div>
 </body>
 </html>

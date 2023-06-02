@@ -25,6 +25,8 @@ fi
 if [ ! -f "template-landingpage.html" ]; then
   cp $WORKDIR/template-landingpage.html .template-landingpage.html
 fi
+cp $WORKDIR/template-landingpage-de.yml .template-landingpage-de.yml
+cp $WORKDIR/template-landingpage-en.yml .template-landingpage-en.yml
 
 if [ ! "$(yq '. | has("url")' metadata.yml)" = true ]; then
   test -n "$CI_PROJECT_URL" && yq -i -Y ".url = \"$CI_PROJECT_URL\"" metadata.yml
@@ -43,7 +45,7 @@ echo "Using input files $CONTENT_FILES"
 pandoc -f markdown -t markdown -s -o .pd-preparation-merged.md --file-scope $CONTENT_FILES
 
 python3 $WORKDIR/create-image-license-reference.py .pd-preparation-merged.md
-python3 $WORKDIR/create-lrmi-json-tag.py
+python3 $WORKDIR/create-metadata-files.py
 
 sed -e ':a' -e 'N' -e '$!ba' -e "s/\`\`\`math\n\([^$]*\)\n\`\`\`/\$\$\1\$\$/g" .pd-preparation-tagged.md > pd-preparation-tempfile1.md
 sed -e ':a' -e 'N' -e '$!ba' -e "s/\\$\`\([^\`]*\)\`\\$/\$\1\$/g" pd-preparation-tempfile1.md > .pd-preparation-prepared.md

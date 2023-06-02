@@ -13,13 +13,16 @@ WORKDIR /build
 
 COPY helper.py .
 COPY create-image-license-reference.py .
-COPY create-lrmi-json-tag.py . 
+COPY create-metadata-files.py . 
 COPY pandoc-preparation.sh .
 COPY default-pandoc.css .
 COPY default-config.yml .
 COPY template-landingpage.html .
+COPY template-landingpage-de.yml .
+COPY template-landingpage-en.yml .
 COPY create-pandoc-script.py .
 COPY pandoc-generate.sh.j2 .
 COPY process.sh .
+COPY labels labels
 
 ENTRYPOINT ["/build/process.sh"]

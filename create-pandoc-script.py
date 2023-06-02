@@ -8,14 +8,6 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape, Template
 from helper import get_config, init_list
 
 
-label = {
-    "de": {
-        "TOC_TITLE": "Inhaltsverzeichnis"
-    },
-    "en": {
-        "TOC_TITLE": "Contents"
-    }
-}
 markdown_filename = sys.argv[1]
 language = "en"
 with open("title.txt", "r") as title_file:
@@ -25,7 +17,7 @@ with open("title.txt", "r") as title_file:
         language = title_metadata["lang"]
         has_online_version = title_metadata["has_online_version"] if "has_online_version" in title_metadata else True
         downloads = init_list(title_metadata, "downloads")
-        if language not in label:
+        if language not in ["de", "en"]:
             language = "en"
     except yaml.YAMLError as exc:
         print(exc)
@@ -46,7 +38,7 @@ template = env.get_template("pandoc-generate.sh.j2")
 template.stream({
     "markdown_filename": markdown_filename,
     "page_title": page_title,
-    "toc_title": label[language]["TOC_TITLE"],
+    "page_lng": language,
     "has_online_version": has_online_version,
     "downloads": downloads,
     "url": url,
