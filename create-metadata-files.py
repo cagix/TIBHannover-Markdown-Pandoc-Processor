@@ -94,6 +94,8 @@ with open('title.txt', 'w', encoding='utf8') as titlefile:
         "language": lngs,
         "lang": main_lng
     }
+    if "image" in data or "thumbnailUrl" in data:
+        generated_metadata["thumbnailUrl"] = data["thumbnailUrl"] if "thumbnailUrl" in data else data["image"]
     def get_label(entry, lng):
         if "prefLabel" in entry:
             if lng in entry["prefLabel"]:
