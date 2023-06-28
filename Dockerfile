@@ -7,6 +7,7 @@ RUN pip3 install requests
 RUN pip3 install yq
 RUN apk add --update jq
 RUN pip3 install Jinja2
+RUN pip3 install --upgrade pandoc
 
 ENV MD_INPUT_DIR=
 WORKDIR /build
@@ -14,6 +15,7 @@ WORKDIR /build
 COPY helper.py .
 COPY create-image-license-reference.py .
 COPY create-metadata-files.py . 
+COPY create-toc.py .
 COPY pandoc-preparation.sh .
 COPY default-pandoc.css .
 COPY default-config.yml .
