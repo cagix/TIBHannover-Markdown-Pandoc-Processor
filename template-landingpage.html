@@ -59,6 +59,20 @@ $if(thumbnailUrl)$
   <meta property="og:image" content="$thumbnailUrl$" />
 $endif$
   <meta name="twitter:card" content="summary" />
+  <script>
+  function expandToc() {
+    var elements = document.querySelectorAll('.collapse-toc');
+    for (i = 0; i < elements.length; ++i) {
+      new bootstrap.Collapse(elements[i], {toggle: false}).show();
+    }
+  }
+  function collapseToc() {
+    var elements = document.querySelectorAll('.collapse-toc');
+    for (i = 0; i < elements.length; ++i) {
+      new bootstrap.Collapse(elements[i], {toggle: false}).hide();
+    }
+  }
+  </script>
 </head>
 <body>
   <div class="container">
@@ -114,6 +128,10 @@ $if(toc-title)$
 $endif$
       <nav id="$idprefix$TOC" role="doc-toc">
         <div class="toc-container">
+          <div class="m-3">
+            <button class="btn btn-primary btn-sm toc-expand-all-button" type="button" onclick="expandToc()">$toc-button-expand-all$</button>
+            <button class="btn btn-primary btn-sm toc-collapse-all-button" type="button" onclick="collapseToc()">$toc-button-collapse-all$</button>
+          </div>
 $for(table-of-contents)$
           <div class="toc-heading-container bg-light ps-2 my-2">
               <a href="$document-filename$.html#$table-of-contents.link$">$table-of-contents.title$</a>
@@ -125,7 +143,7 @@ $if(table-of-contents.children)$
 $endif$
           </div>
 $if(table-of-contents.children)$
-          <div class="collapse" id="collapse-toc-$table-of-contents.id$">
+          <div class="collapse collapse-toc" id="collapse-toc-$table-of-contents.id$">
 $for(table-of-contents.children)$
             <div class="toc-heading-container bg-light ps-2 ms-4 my-2">
               <a href="$document-filename$.html#$table-of-contents.children.link$">$table-of-contents.children.title$</a>
@@ -137,7 +155,7 @@ $if(table-of-contents.children.children)$
 $endif$
             </div>
 $if(table-of-contents.children.children)$
-            <div class="collapse" id="collapse-toc-$table-of-contents.children.id$">
+            <div class="collapse collapse-toc" id="collapse-toc-$table-of-contents.children.id$">
 $for(table-of-contents.children.children)$
               <div class="toc-heading-container bg-light ps-2 ms-5 my-2">
                 <a href="$document-filename$.html#$table-of-contents.children.children.link$">$table-of-contents.children.children.title$</a>
