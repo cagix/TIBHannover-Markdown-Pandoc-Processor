@@ -1,5 +1,7 @@
 metadata-title: "About this Resource"
 toc-title: "Contents"
+toc-button-expand-all: "Expand all"
+toc-button-collapse-all: "Collapse all"
 label-about: "Subject"
 label-educationalLevel: "Educational Level"
 label-learningResourceType: "Resource Type"

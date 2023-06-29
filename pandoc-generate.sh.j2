@@ -9,10 +9,6 @@ fi
 
 {% if generate_landingpage %}
 echo "Generating landing page"
-echo '$toc$' > .template-toc
-pandoc title.txt {{ markdown_filename }} -f markdown -t html -o .toc.html --template .template-toc --toc
-sed -i "s/href=\"#/href=\"${OUTPUT_FILENAME}.html#/g" .toc.html
-echo -e "table-of-contents: |\n  `cat .toc.html | tr '\n' ' '`" > .toc.yml
 pandoc title.txt {{ markdown_filename }} -f markdown -t html -s -o index.html --metadata-file .toc.yml --metadata-file metadata.yml --metadata-file {% if page_lng == 'de' %}.template-landingpage-de.yml{% else %}.template-landingpage-en.yml{% endif %} --metadata pagetitle="{{ page_title }}" --include-in-header=metadata.json --katex --css pandoc.css --template .template-landingpage.html --toc -V document-filename=${OUTPUT_FILENAME}
 {% endif %}
 {% if has_online_version %}

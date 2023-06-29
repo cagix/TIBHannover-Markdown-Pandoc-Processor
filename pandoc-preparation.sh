@@ -46,6 +46,7 @@ pandoc -f markdown -t markdown -s -o .pd-preparation-merged.md --file-scope $CON
 
 python3 $WORKDIR/create-image-license-reference.py .pd-preparation-merged.md
 python3 $WORKDIR/create-metadata-files.py
+python3 $WORKDIR/create-toc.py .pd-preparation-tagged.md
 
 sed -e ':a' -e 'N' -e '$!ba' -e "s/\`\`\`math\n\([^$]*\)\n\`\`\`/\$\$\1\$\$/g" .pd-preparation-tagged.md > pd-preparation-tempfile1.md
 sed -e ':a' -e 'N' -e '$!ba' -e "s/\\$\`\([^\`]*\)\`\\$/\$\1\$/g" pd-preparation-tempfile1.md > .pd-preparation-prepared.md

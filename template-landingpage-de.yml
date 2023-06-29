@@ -1,5 +1,7 @@
 metadata-title: "Über dieses Werk"
 toc-title: "Inhaltsverzeichnis"
+toc-button-expand-all: "Alles anzeigen"
+toc-button-collapse-all: "Alles ausblenden"
 label-about: "Fachgebiet"
 label-educationalLevel: "Bildungsniveau"
 label-learningResourceType: "Materialart"
