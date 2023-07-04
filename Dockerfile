@@ -7,6 +7,7 @@ RUN pip3 install requests
 RUN pip3 install yq
 RUN apk add --update jq
 RUN pip3 install Jinja2
+RUN pip3 install babel
 RUN pip3 install --upgrade pandoc
 
 ENV MD_INPUT_DIR=
