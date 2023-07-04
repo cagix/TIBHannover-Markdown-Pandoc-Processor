@@ -6,7 +6,7 @@ import re
 import sys
 from jinja2 import Template
 from urllib.parse import urlparse
-from helper import init_list, get_config, get_creator_string, get_license_url
+from helper import init_list, get_config, get_name_string, get_license_url
 import pandoc
 from pandoc.types import Header
 
@@ -21,24 +21,28 @@ text_templates = {
         "en": "<div about=\"{{ link }}\"><a rel=\"dc:source\" href=\"{{ image_page }}\"><span property=\"dc:title\">{{ image_title }}</span></a> by <a rel=\"cc:attributionURL dc:creator\" href=\"{{ image_author_link }}\" property=\"cc:attributionName\">{{ image_author }}</a> under <a rel=\"license\" href=\"{{ license_url }}\">{{ license_short_name }}</a></div>"
     },
     "reusage_note": {
-        "de": """
+        "de": """{% if document_license_url or  document_url %}
 
 ---
 {% for n in range(reuse_note_heading_level) %}#{% endfor %} Hinweis zur Nachnutzung
 
-Dieses Werk und dessen Inhalte sind - sofern nicht anders angegeben - lizenziert unter {{ document_license_short_name }}.
-Nennung dieses Werkes bitte wie folgt: "[{{ document_title }}]({{ document_url }})" von {{ document_author }}, Lizenz: [{{ document_license_short_name }}]({{ document_license_url }}).
-Die Quellen dieses Werks sind verfügbar auf [{{ domain }}]({{ document_url }}).
-""",
-        "en": """
+{% if document_license_url %}Dieses Werk und dessen Inhalte sind - sofern nicht anders angegeben - lizenziert unter {{ document_license_short_name }}.
+Nennung dieses Werkes bitte wie folgt: "[{{ document_title }}]({{ document_url }})" von {{ document_author }}, Lizenz: [{{ document_license_short_name }}]({{ document_license_url }}).{% endif %}
+{% if document_url %}Die Quellen dieses Werks sind verfügbar auf [{{ domain }}]({{ document_url }}).{% endif %}
+{% endif %}""",
+        "en": """{% if document_license_url or  document_url %}
 
 ---
 {% for n in range(reuse_note_heading_level) %}#{% endfor %} Note on reuse
 
-This work and its contents are licensed under {{ document_license_short_name }} unless otherwise noted.
-Please cite this work as follows: "[{{ document_title }}]({{ document_url }})" by {{ document_author }}, license: [{{ document_license_short_name }}]({{ document_license_url }}).
-The sources of this work are available on [{{ domain }}]({{ document_url }}).
-"""
+{% if document_license_url %}This work and its contents are licensed under {{ document_license_short_name }} unless otherwise noted.
+Please cite this work as follows: "[{{ document_title }}]({{ document_url }})" by {{ document_author }}, license: [{{ document_license_short_name }}]({{ document_license_url }}).{% endif %}
+{% if document_url %}The sources of this work are available on [{{ domain }}]({{ document_url }}).{% endif %}
+{% endif %}"""
+    },
+    "reusage_note_landingpage": {
+        "de": "{% if document_license_url or  document_url %}{% if document_license_url %}Dieses Werk und dessen Inhalte sind - sofern nicht anders angegeben - lizenziert unter {{ document_license_short_name }}. Nennung dieses Werkes bitte wie folgt: {% if document_url %}<a href=\"{{ document_url }}\">{% endif %}{{ document_title }}{% if document_url %}</a>{% endif %} von {{ document_author }}, Lizenz: <a href=\"{{ document_license_url }}\">{{ document_license_short_name }}</a>. {% endif %}{% if document_url %}Die Quellen dieses Werks sind verfügbar auf <a href=\"{{ document_url }}\">{{ domain }}</a>.{% endif %}{% endif %}",
+        "en": "{% if document_license_url or  document_url %}{% if document_license_url %}This work and its contents are licensed under {{ document_license_short_name }} unless otherwise noted. Please cite this work as follows: {% if document_url %}<a href=\"{{ document_url }}\">{% endif %}{{ document_title }}{% if document_url %}</a>{% endif %} by {{ document_author }}, license: <a href=\"{{ document_license_url }}\">{{ document_license_short_name }}</a>. {% endif %}{% if document_url %}The sources of this work are available on <a href=\"{{ document_url }}\">{{ domain }}</a>.{% endif %}{% endif %}"
     }
 }
 
@@ -105,7 +109,6 @@ for treffer in images:
             mtullu = Template(text_templates["mtullu"][output_lng]).render(
                 link=link, image_page=image_page, image_title=image_title, image_author_link=image_author_link, image_author=image_author, license_url=license_url, license_short_name=license_short_name
             )
-            # print(mtullu)
 
             # replace original image with image + citation
             text = re.sub("!\[" + description + "\]\(" + link + "\)", "![" + description + "](" + link + ")" + "  \n" + mtullu, text)
@@ -126,17 +129,19 @@ if generate_reuse_note:
     else :
         document_url = ""
         domain = ""
-    document_author = ", ".join(map(lambda a: get_creator_string(a), init_list(data, 'creator')))
-    # document_author_url =
+    document_author = ", ".join(map(lambda a: get_name_string(a), init_list(data, 'creator')))
 
     document_license_url = get_license_url(data)
-    if "public-domain" in document_license_url or "zero" in document_license_url :
-        document_license_short_name = "Public domain"
-    else :
-        document_license_components = re.findall("licenses\/([^\/]*)\/([^\/]*)", document_license_url)
-        document_license_code = document_license_components[0][0]
-        document_license_version = document_license_components[0][1]
-        document_license_short_name = "CC " + document_license_code.upper() + " " + document_license_version
+    if document_license_url:
+        if "public-domain" in document_license_url or "zero" in document_license_url:
+            document_license_short_name = "Public domain"
+        else :
+            document_license_components = re.findall("licenses\/([^\/]*)\/([^\/]*)", document_license_url)
+            document_license_code = document_license_components[0][0]
+            document_license_version = document_license_components[0][1]
+            document_license_short_name = "CC " + document_license_code.upper() + " " + document_license_version
+    else:
+        document_license_short_name = None
 
     document_license_text = Template(text_templates["reusage_note"][output_lng]).render(
         reuse_note_heading_level=get_min_heading_level(text),
@@ -146,5 +151,21 @@ if generate_reuse_note:
         domain=domain
     )
 
+    landingpage_license_text = Template(text_templates["reusage_note_landingpage"][output_lng]).render(
+        reuse_note_heading_level=get_min_heading_level(text),
+        document_author=document_author,
+        document_license_short_name=document_license_short_name, document_license_url=document_license_url,
+        document_title=document_title, document_url=document_url,
+        domain=domain
+    )
+
 with open(".pd-preparation-tagged.md", 'w', encoding='utf8') as document_tagged:
     document_tagged.write(text + document_license_text)
+
+# Add the reuse notice to the landing page
+if output_lng == "de":
+    with open(".template-landingpage-de.yml", "a") as template_de:
+        template_de.write("\nreuse: >\n " + landingpage_license_text)
+elif output_lng == "en":
+    with open(".template-landingpage-en.yml", "a") as template_en:
+        template_en.write("\nreuse: >\n " + landingpage_license_text)

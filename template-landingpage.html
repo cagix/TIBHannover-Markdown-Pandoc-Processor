@@ -104,12 +104,12 @@ $endif$
 $if(document-filename)$
       <div class="buttons d-flex">
 $if(has_online_version)$
-        <a class="btn btn-primary m-1" href="$document-filename$.html" role="button" style="color: #fff;">Read online</a>
+        <a class="btn btn-primary m-1" href="$document-filename$.html" role="button" style="color: #fff;">$readonline-label$</a>
 $endif$
 $if(downloads)$
         <div class="resource_download dropdown m-1">
           <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Download
+            $download-label$
           </button>
           <ul class="dropdown-menu">
 $for(downloads)$
@@ -178,6 +178,12 @@ $if(about)$
         $for(about)$$about$$sep$, $endfor$
       </p>
 $endif$
+$if(langLabels)$
+      <p class="resource_lang">
+        <div class="text-secondary">$label-lang$</div>
+        $for(langLabels)$$langLabels$$sep$, $endfor$
+      </p>
+$endif$
 $if(educationalLevel)$
       <p class="resource_educationalLevel">
         <div class="text-secondary">$label-educationalLevel$</div>
@@ -190,7 +196,33 @@ $if(learningResourceType)$
         $for(learningResourceType)$$learningResourceType$$sep$, $endfor$
       </p>
 $endif$
+$if(datePublishedFormatted)$
+      <p class="resource_datePublished">
+        <div class="text-secondary">$label-datePublished$</div>
+        $datePublishedFormatted$
+      </p>
+$endif$
+$if(publisher)$
+      <p class="resource_publisher">
+        <div class="text-secondary">$label-publisher$</div>
+        $for(publisher)$$publisher$$sep$, $endfor$
+      </p>
+$endif$
+$if(keywords)$
+      <p class="resource_keywords">
+        <div class="text-secondary">$label-keywords$</div>
+        $for(keywords)$$keywords$$sep$, $endfor$
+      </p>
+$endif$
     </section>
+$if(reuse)$
+    <section class="reuse">
+      <h1>$note-on-reuse$</h1>
+      <p class="reuse-note">
+        $reuse$
+      </p>
+    </section>
+$endif$
   </div>
 </body>
 </html>
