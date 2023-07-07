@@ -47,6 +47,16 @@ def add_missing_labels(record, field_name):
                 if len(merged_labels) > 0:
                     entry["prefLabel"] = merged_labels
 
+def get_labels(data, field, language_code):
+    def get_label(entry, lng):
+        if "prefLabel" in entry:
+            if lng in entry["prefLabel"]:
+                return entry["prefLabel"][lng]
+            elif "en" in entry["prefLabel"]:
+                return entry["prefLabel"]["en"]
+        return entry["id"]
+    return list(filter(None, map(lambda x: get_label(x, language_code), init_list(data, field)))) if field in data else []
+
 def format_date_to_locale(record, main_lng, date_field, date_format_str):
     """Formats a date to the locale.
 
@@ -96,21 +106,14 @@ with open("metadata.yml", 'w', encoding='utf8') as metadata_file:
     convert_to_standard_vocab_entry(data, "about")
     convert_to_standard_vocab_entry(data, "educationalLevel")
     convert_to_standard_vocab_entry(data, "learningResourceType")
-    convert_to_standard_vocab_entry(data, "inLanguage")
     add_missing_labels(data, "about")
     add_missing_labels(data, "educationalLevel")
     add_missing_labels(data, "learningResourceType")
-    add_missing_labels(data, "inLanguage")
     yaml.dump(data, metadata_file, allow_unicode=True, explicit_start=True)
 
 with open('title.txt', 'w', encoding='utf8') as titlefile:
     authors = list(map(lambda a: get_name_string(a), init_list(data, "creator")))
     lngs = init_list(data, 'inLanguage')
-    
-    # If prefLabels are already assigned to languages, get only the language ids
-    if len(lngs) > 0 and type(lngs[0]) == dict:
-        lngs = [lang["id"] for lang in lngs]
-
     main_lng = "en"
     if "en" in lngs:
         main_lng = "en"
@@ -128,26 +131,18 @@ with open('title.txt', 'w', encoding='utf8') as titlefile:
     }
     if "image" in data or "thumbnailUrl" in data:
         generated_metadata["thumbnailUrl"] = data["thumbnailUrl"] if "thumbnailUrl" in data else data["image"]
-    
-    def get_label(entry, lng):
-        if "prefLabel" in entry:
-            if lng in entry["prefLabel"]:
-                return entry["prefLabel"][lng]
-            elif "en" in entry["prefLabel"]:
-                return entry["prefLabel"]["en"]
-        return entry["id"]
 
-    def get_labels_for_main_lng(field):
-        return list(filter(None, map(lambda x: get_label(x, main_lng), data[field]))) if field in data else []
-
-    generated_metadata["about"] = get_labels_for_main_lng("about")
-    generated_metadata["educationalLevel"] = get_labels_for_main_lng("educationalLevel")
-    generated_metadata["learningResourceType"] = get_labels_for_main_lng("learningResourceType")
+    generated_metadata["about"] = get_labels(data, "about", main_lng)
+    generated_metadata["educationalLevel"] = get_labels(data, "educationalLevel", main_lng)
+    generated_metadata["learningResourceType"] = get_labels(data, "learningResourceType", main_lng)
     output_format = list(map(lambda x: x["format"],init_list(config, "output")))
     generated_metadata["has_online_version"] = "html" in output_format
     downloads = list(filter(lambda x: x != "html", output_format))
     generated_metadata["downloads"] = list(map(lambda x: {"pandoc_format": get_pandoc_format(x), "file_extension": get_file_extension(x), "label": x.upper()}, downloads))
-    generated_metadata["langLabels"] = get_labels_for_main_lng("inLanguage")
+    languages_with_labels = {"inLanguage": lngs}
+    convert_to_standard_vocab_entry(languages_with_labels, "inLanguage")
+    add_missing_labels(languages_with_labels, "inLanguage")
+    generated_metadata["langLabels"] = get_labels(languages_with_labels, "inLanguage", main_lng)
     generated_metadata["publisher"] = list(map(lambda a: get_name_string(a), init_list(data, "publisher")))
     generated_metadata["datePublishedFormatted"] = format_date_to_locale(data, main_lng, "datePublished", "%Y-%m-%d")
 
