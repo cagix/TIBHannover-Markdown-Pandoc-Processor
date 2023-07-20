@@ -5,7 +5,7 @@ Docker container for Pandoc conversion of Markdown files to various output forma
 Provided containers:
 * last stable release - `registry.gitlab.com/tibhannover/oer/markdown-pandoc-processor`
 * current snapshot - `registry.gitlab.com/tibhannover/oer/markdown-pandoc-processor/main`
-* fixed stable release - `registry.gitlab.com/tibhannover/oer/markdown-pandoc-processor/<version>`
+* fixed stable release - `registry.gitlab.com/tibhannover/oer/markdown-pandoc-processor:<version>`
 
 ## Features
 
