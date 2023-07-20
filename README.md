@@ -2,6 +2,11 @@
 
 Docker container for Pandoc conversion of Markdown files to various output formats including preparation for OER repositories and Google Search.
 
+Provided containers:
+* last stable release - `registry.gitlab.com/tibhannover/oer/markdown-pandoc-processor`
+* current snapshot - `registry.gitlab.com/tibhannover/oer/markdown-pandoc-processor/main`
+* fixed stable release - `registry.gitlab.com/tibhannover/oer/markdown-pandoc-processor/<version>`
+
 ## Features
 
 * builds various output files via pandoc like PDF, HTML, EPUB, ...
@@ -215,3 +220,7 @@ prepare-and-build-documents:
 
 ```
 </details>
+
+## Release
+
+To create a new release just create a new tag in the git-repo. Use https://gitlab.com/TIBHannover/oer/markdown-pandoc-processor/-/releases/new for this to automatically create a release-page in gitlab. The docker container will be created and provided automatically.
