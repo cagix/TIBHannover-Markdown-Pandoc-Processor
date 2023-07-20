@@ -32,10 +32,10 @@ if [ ! "$(yq '. | has("url")' metadata.yml)" = true ]; then
   test -n "$CI_PROJECT_URL" && yq -i -Y ".url = \"$CI_PROJECT_URL\"" metadata.yml
   test -n "$GITHUB_ACTIONS" && yq -i -Y ".url = \"${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}\"" metadata.yml
 fi
-if [ ! "$(yq '. | has("datePublished")' metadata.yml)" = true ]; then
-  DATE_PUBLISHED=$(date -u +"%Y-%m-%d %H:%M")
-  yq -i -Y ".datePublished = \"$DATE_PUBLISHED\"" metadata.yml
-fi
+
+DATE_MODIFIED=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+yq -i -Y ".dateModified = \"$DATE_MODIFIED\"" metadata.yml
+
 if [ "$(yq '. | has("content_files")' config.yml)" = true ]; then
   CONTENT_FILES=$(yq -r '."content_files"[]' config.yml | tr '\n' ' ')
 else
