@@ -1,3 +1,5 @@
+import pandoc
+from pandoc.types import *
 import yaml
 
 
@@ -33,3 +35,14 @@ def get_config():
         except yaml.YAMLError as exc:
             print(exc)
     return {}
+
+def get_pandoc_header(md_text):
+    header = []
+    for line in md_text.splitlines():
+        try:
+            header.extend(filter(lambda elt: isinstance(elt, Header), pandoc.iter(pandoc.read(line))))
+        except AssertionError:
+            print("Cannot parse md line: " + line)
+            continue
+    return header
+
