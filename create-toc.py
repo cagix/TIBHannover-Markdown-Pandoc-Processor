@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-import pandoc
 import yaml
 from pandoc.types import *
+from helper import get_pandoc_header
 
 filename = sys.argv[1]
 #print(pandoc.configure(read=True))
 with open(filename) as f:
-    content = pandoc.read(f.read()) 
+    content = f.read()
 
 def to_text(data):
     text = ""
@@ -33,7 +33,7 @@ def to_hierarchical_list(headers, result_list=[], cur_level=None):
             return result_list
         
 
-headers = list(filter(lambda elt: isinstance(elt, Header), pandoc.iter(content)))
+headers = get_pandoc_header(content)
 toc = to_hierarchical_list([{"level": elt[0], "link": elt[1][0], "title": to_text(elt[-1]), "id": i} for i,elt in enumerate(headers)])
 
 with open('.toc.yml', 'w', encoding='utf8') as tocfile:

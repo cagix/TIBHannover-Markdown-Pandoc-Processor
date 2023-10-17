@@ -6,9 +6,7 @@ import re
 import sys
 from jinja2 import Template
 from urllib.parse import urlparse
-from helper import init_list, get_config, get_name_string, get_license_url
-import pandoc
-from pandoc.types import Header
+from helper import init_list, get_config, get_name_string, get_license_url, get_pandoc_header
 
 
 filename = sys.argv[1]
@@ -114,11 +112,7 @@ for treffer in images:
             text = re.sub("!\[" + description + "\]\(" + link + "\)", "![" + description + "](" + link + ")" + "  \n" + mtullu, text)
 
 def get_min_heading_level(md_text):
-    min_heading_level = None
-    for elt in pandoc.iter(pandoc.read(md_text)):
-        if isinstance(elt, Header):
-            min_heading_level = min(elt[0], min_heading_level) if min_heading_level is not None else elt[0]
-    return min_heading_level if min_heading_level is not None else 1
+    return min(list(map(lambda h: h[0], get_pandoc_header(md_text))), default=1)
     
 document_license_text = ""
 if generate_reuse_note:
