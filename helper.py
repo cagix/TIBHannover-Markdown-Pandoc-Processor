@@ -38,9 +38,15 @@ def get_config():
 
 def get_pandoc_header(md_text):
     header = []
+    is_inside_code_block = False
     for line in md_text.splitlines():
+        if line.strip().startswith("```") and not is_inside_code_block:
+            is_inside_code_block = True
+        elif line.strip().startswith("```") and is_inside_code_block:
+            is_inside_code_block = False
         try:
-            header.extend(filter(lambda elt: isinstance(elt, Header), pandoc.iter(pandoc.read(line))))
+            if not is_inside_code_block:
+                header.extend(filter(lambda elt: isinstance(elt, Header), pandoc.iter(pandoc.read(line))))
         except AssertionError:
             print("Cannot parse md line: " + line)
             continue
