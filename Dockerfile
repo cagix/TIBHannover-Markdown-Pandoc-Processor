@@ -13,6 +13,7 @@ RUN pip3 install --upgrade pandoc
 ENV MD_INPUT_DIR=
 WORKDIR /build
 
+COPY resources/ .
 COPY helper.py .
 COPY create-image-license-reference.py .
 COPY create-metadata-files.py . 
